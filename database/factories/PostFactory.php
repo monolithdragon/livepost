@@ -14,10 +14,18 @@ class PostFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition() : array
     {
         return [
-            //
+            'title' => fake()->word(),
+            'body' => []
         ];
+    }
+
+    public function untitled()
+    {
+        return $this->state([
+            'title' => 'untitled'
+        ]);
     }
 }
