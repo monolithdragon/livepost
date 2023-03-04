@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -15,10 +16,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()->get();
-
-        return new JsonResponse([
-            'data' => $users
-        ]);
+        return UserResource::collection($users);
     }
 
     /**
@@ -32,9 +30,7 @@ class UserController extends Controller
             'password' => $request->password
         ]);
 
-        return new JsonResponse([
-            'data' => $created
-        ]);
+        return new UserResource($created);
     }
 
     /**
@@ -42,9 +38,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new JsonResponse([
-            'data' => $user
-        ]);
+        return new UserResource($user);
     }
 
     /**
@@ -66,9 +60,7 @@ class UserController extends Controller
             ], 400);
         }
 
-        return new JsonResponse([
-            'data' => $user
-        ]);
+        return new UserResource($user);
     }
 
     /**
