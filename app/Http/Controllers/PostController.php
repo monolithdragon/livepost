@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
 {
@@ -13,7 +14,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::query()->get();
+        return new JsonResponse([
+            'data' => $posts
+        ]);
     }
 
     /**
@@ -21,7 +25,14 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
+        $created = Post::query()->create([
+            'title' => $request->title,
+            'body' => $request->body
+        ]);
+
+        return new JsonResponse([
+            'data' => $created
+        ]);
     }
 
     /**
@@ -29,7 +40,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return new JsonResponse([
+            'data' => $post
+        ]);
     }
 
     /**
@@ -37,7 +50,22 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        $updated = $post->update([
+            'title' => $request->title ?? $post->title,
+            'body' => $request->body ?? $post->body
+        ]);
+
+        if ( ! $updated ) {
+            return new JsonResponse([
+                'errors' => [
+                    'Failed to update post.'
+                ]
+            ], 400);
+        }
+
+        return new JsonResponse([
+            'data' => $post
+        ]);
     }
 
     /**
@@ -45,6 +73,19 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $deleted = $post->forceDelete();
+
+        if ( ! $deleted ) {
+            return new JsonResponse([
+                'errors' => [
+                    'Could not delete post.'
+                ]
+            ], 400);
+        }
+
+        return new JsonResponse([
+            'data' => 'Successfully deleted'
+        ]);
+
     }
 }
