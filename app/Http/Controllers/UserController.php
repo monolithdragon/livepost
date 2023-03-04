@@ -14,8 +14,10 @@ class UserController extends Controller
      */
     public function index()
     {
+        $users = User::query()->get();
+
         return new JsonResponse([
-            'data' => 'aaaa'
+            'data' => $users
         ]);
     }
 
@@ -24,8 +26,14 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        $created = User::query()->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password
+        ]);
+
         return new JsonResponse([
-            'data' => 'posted'
+            'data' => $created
         ]);
     }
 
@@ -42,10 +50,24 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $User)
+    public function update(UpdateUserRequest $request, User $user)
     {
+        $updated = $user->update([
+            'name' => $request->name ?? $user->name,
+            'email' => $request->email ?? $user->email,
+            'password' => $request->password ?? $user->password
+        ]);
+
+        if ( ! $updated ) {
+            return new JsonResponse([
+                'errors' => [
+                    'Failed to update user.'
+                ]
+            ], 400);
+        }
+
         return new JsonResponse([
-            'data' => 'patched'
+            'data' => $user
         ]);
     }
 
@@ -54,8 +76,18 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $deleted = $user->forceDelete();
+
+        if ( ! $deleted ) {
+            return new JsonResponse([
+                'errors' => [
+                    'Could not delete user.'
+                ]
+            ], 400);
+        }
+
         return new JsonResponse([
-            'data' => 'deleted'
+            'data' => 'Successfully deleted'
         ]);
     }
 }
