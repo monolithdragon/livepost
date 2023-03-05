@@ -49,7 +49,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user, UserRepository $repository)
     {
-        $updated = $repository->update($user, $request->only([
+        $user = $repository->update($user, $request->only([
             'name',
             'email',
             'password'
