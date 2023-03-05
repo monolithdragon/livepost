@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\GeneralJsonException;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +23,7 @@ class UserRepository extends BaseRepository
         'password' => Hash::make(data_get($attributes, 'password'))
       ]);
 
-      throw_if(! $created, \Exception::class, 'Failed to create user.');
+      throw_if(! $created, GeneralJsonException::class, 'Failed to create user.');
 
       return $created;
     });
@@ -42,7 +43,7 @@ class UserRepository extends BaseRepository
         'email' => data_get($attributes, 'email', $user->email),
       ]);
 
-      throw_if(! $updated, \Exception::class, 'Failed to update user.');
+      throw_if(! $updated, GeneralJsonException::class, 'Failed to update user.');
 
       return $user;
     });
@@ -57,7 +58,7 @@ class UserRepository extends BaseRepository
   {
     return DB::transaction(function () use ($user) {
       $deleted = $user->forceDelete();
-      throw_if(! $deleted, \Exception::class, 'Could not delete user.');
+      throw_if(! $deleted, GeneralJsonException::class, 'Could not delete user.');
 
       return $deleted;
     });
