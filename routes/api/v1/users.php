@@ -7,18 +7,18 @@ Route::group([
   'as' => 'users.',
   'controller' => UserController::class,
 ], function () {
-  Route::get('/users', 'index')
+  Route::get('users', 'index')
     ->name('index');
 
-  Route::get('/users/{user}', 'show')
+  Route::get('users/{user}', 'show')
     ->name('show');
 
-  Route::post('/users', 'store')
+  Route::post('users', 'store')
     ->name('store');
 
-  Route::patch('/users/{user}', 'update')
+  Route::patch('users/{user}', 'update')
     ->name('update');
 
-  Route::delete('/users/{user}', 'destroy')
+  Route::delete('users/{user}', 'destroy')
     ->name('destroy');
 });
