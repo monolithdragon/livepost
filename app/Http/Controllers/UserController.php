@@ -10,10 +10,21 @@ use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * @group User Management
+ *
+ * APIs to manage the user resource.
+ */
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of users.
+     *
+     * @queryParam page_size integer required Size per page. Default to 20. Example: 20
+     * @queryParam page integer Page to view. Example: 1
+     *
+     * @apiResourceModel App\Models\User
+     * @apiResourceCollection App\Http\Resources\UserResource
      */
     public function index(Request $request)
     {
@@ -24,6 +35,13 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @bodyParam name string required Name of the user. Example: John Doe
+     * @bodyParam email string required Email address of the user. Example: johndoe@doe.com
+     * @bodyParam password string required Password of the user.
+     *
+     * @apiResourceModel App\Models\User
+     * @apiResourceCollection App\Http\Resources\UserResource
      */
     public function store(StoreUserRequest $request, UserRepository $repository)
     {
@@ -37,7 +55,10 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified user.
+     *
+     * @apiResourceModel App\Models\User
+     * @apiResourceCollection App\Http\Resources\UserResource
      */
     public function show(User $user)
     {
@@ -46,6 +67,13 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
+     * @bodyParam name string required Name of the user. Example: John Doe
+     * @bodyParam email string required Email address of the user. Example: johndoe@doe.com
+     * @bodyParam password string required Password of the user.
+     *
+     * @apiResourceModel App\Models\User
+     * @apiResourceCollection App\Http\Resources\UserResource
      */
     public function update(UpdateUserRequest $request, User $user, UserRepository $repository)
     {
@@ -60,6 +88,11 @@ class UserController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @response 200 { "data": "Successfully"}
+     *
+     * @apiResourceModel App\Models\User
+     * @apiResourceCollection App\Http\Resources\UserResource
      */
     public function destroy(User $user, UserRepository $repository)
     {
