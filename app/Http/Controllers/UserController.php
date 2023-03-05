@@ -6,6 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -24,13 +25,13 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request, UserRepository $repository)
     {
-        $created = User::query()->create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password
-        ]);
+        $created = $repository->create($request->only([
+            'name',
+            'email',
+            'password'
+        ]));
 
         return new UserResource($created);
     }
@@ -46,21 +47,13 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user, UserRepository $repository)
     {
-        $updated = $user->update([
-            'name' => $request->name ?? $user->name,
-            'email' => $request->email ?? $user->email,
-            'password' => $request->password ?? $user->password
-        ]);
-
-        if ( ! $updated ) {
-            return new JsonResponse([
-                'errors' => [
-                    'Failed to update user.'
-                ]
-            ], 400);
-        }
+        $updated = $repository->update($user, $request->only([
+            'name',
+            'email',
+            'password'
+        ]));
 
         return new UserResource($user);
     }
@@ -68,17 +61,9 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user, UserRepository $repository)
     {
-        $deleted = $user->forceDelete();
-
-        if ( ! $deleted ) {
-            return new JsonResponse([
-                'errors' => [
-                    'Could not delete user.'
-                ]
-            ], 400);
-        }
+        $user = $repository->forceDelete($user);
 
         return new JsonResponse([
             'data' => 'Successfully deleted'
